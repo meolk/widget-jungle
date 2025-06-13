@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Jungle Donation Bar (Live)</title>
+    <style>
+        body {
+            margin: 0;
+            background: transparent;
+        }
+        .container {
+            position: relative;
+            width: 600px;
+            height: 100px;
+        }
+        .bar {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: url('bamboo_bar.png') no-repeat center;
+            background-size: contain;
+        }
+        .beetle {
+            position: absolute;
+            top: 10px;
+            width: 64px;
+            height: 64px;
+            background: url('beetle.png') no-repeat center;
+            background-size: contain;
+            transition: left 0.4s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bar"></div>
+        <div class="beetle" id="beetle"></div>
+    </div>
+
+    <script>
+        const beetle = document.getElementById('beetle');
+        const container = document.querySelector('.container');
+        const maxPosition = container.clientWidth - 64;
+        const goalAmount = 130000;
+
+        async function updateProgress() {
+            try {
+                const response = await fetch('https://www.donationalerts.com/api/v1/goal', {
+                    headers: {
+                        'Authorization': 'Bearer 6hEq3wGSEaGUukH52LtU'
+                    }
+                });
+                const data = await response.json();
+                const current = data.current_amount || 0;
+                const progress = Math.min(current / goalAmount, 1);
+                beetle.style.left = (progress * maxPosition) + 'px';
+            } catch (e) {
+                console.error('Ошибка загрузки прогресса', e);
+            }
+        }
+
+        setInterval(updateProgress, 5000);
+        updateProgress();
+    </script>
+</body>
+</html>
