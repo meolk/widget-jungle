@@ -1,57 +1,68 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Jungle Donation Goal</title>
+    <title>Jungle Donation Bar (Live)</title>
     <style>
         body {
             margin: 0;
             background: transparent;
-            overflow: hidden;
         }
-        #container {
+        .container {
             position: relative;
             width: 600px;
-            height: 120px;
+            height: 100px;
         }
-        #bamboo {
-            width: 100%;
-            height: auto;
+        .bar {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        #beetle {
-            width: 90px;
-            height: auto;
-            position: absolute;
-            top: 1px;
+            top: 30px;
             left: 0;
+            width: 100%;
+            height: 40px;
+            background: url('bamboo_bar.png') no-repeat center;
+            background-size: contain;
+        }
+        .beetle {
+            position: absolute;
+            top: 10px;
+            width: 64px;
+            height: 64px;
+            background: url('beetle.png') no-repeat center;
+            background-size: contain;
             transition: left 0.4s ease-out;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <img src="bamboo.png" id="bamboo">
-        <img src="beetle.png" id="beetle">
+    <div class="container">
+        <div class="bar"></div>
+        <div class="beetle" id="beetle"></div>
     </div>
 
     <script>
-        // Пример обновления прогресса — можно заменить API-данными от Donation Alerts
-        const current = 5000;  // сумма собранного
-        const goal = 130000;   // цель
-        const beetle = document.getElementById("beetle");
-        const container = document.getElementById("container");
+        const beetle = document.getElementById('beetle');
+        const container = document.querySelector('.container');
+        const maxPosition = container.clientWidth - 64;
+        const goalAmount = 130000;
 
-        function updateProgress(current, goal) {
-            const percent = Math.min(current / goal, 1);
-            const trackWidth = container.offsetWidth - beetle.offsetWidth;
-            beetle.style.left = `${percent * trackWidth}px`;
+        async function updateProgress() {
+            try {
+                const response = await fetch('https://www.donationalerts.com/api/v1/goal', {
+                    headers: {
+                        'Authorization': 'Bearer 6hEq3wGSEaGUukH52LtU'
+                    }
+                });
+                const data = await response.json();
+                const current = data.current_amount || 0;
+                const progress = Math.min(current / goalAmount, 1);
+                beetle.style.left = (progress * maxPosition) + 'px';
+            } catch (e) {
+                console.error('Ошибка загрузки прогресса', e);
+            }
         }
 
-        updateProgress(current, goal);
+        setInterval(updateProgress, 5000);
+        updateProgress();
     </script>
 </body>
 </html>
