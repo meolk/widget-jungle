@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Jungle Donation Goal</title>
+    <style>
+        body {
+            margin: 0;
+            background: transparent;
+            overflow: hidden;
+        }
+        #container {
+            position: relative;
+            width: 600px;
+            height: 120px;
+        }
+        #bamboo {
+            width: 100%;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #beetle {
+            width: 60px;
+            height: auto;
+            position: absolute;
+            top: 30px;
+            left: 0;
+            transition: left 0.4s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <img src="bamboo.png" id="bamboo">
+        <img src="beetle.png" id="beetle">
+    </div>
+
+    <script>
+        // Пример обновления прогресса — можно заменить API-данными от Donation Alerts
+        const current = 5000;  // сумма собранного
+        const goal = 130000;   // цель
+        const beetle = document.getElementById("beetle");
+        const container = document.getElementById("container");
+
+        function updateProgress(current, goal) {
+            const percent = Math.min(current / goal, 1);
+            const trackWidth = container.offsetWidth - beetle.offsetWidth;
+            beetle.style.left = `${percent * trackWidth}px`;
+        }
+
+        updateProgress(current, goal);
+    </script>
+</body>
+</html>
